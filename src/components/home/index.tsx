@@ -1,22 +1,44 @@
-import { Button } from 'react-bootstrap';
-import AddNewExpense from '../AddNewExpense';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../../supabaseClient';
+import TransactionList from './TransactionList';
+import { Transaction } from './TransactionList/Transaction';
+import { Spinner } from 'react-bootstrap';
 
 const Home: React.FC<{}> = () => {
-  const [showAddNewExpense, setShowAddNewExpense] = useState(false);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [fetchingTransactions, setFetchingTransactions] =
+        useState<boolean>(true);
 
-  const handleShowAddNewExpense = () => {
-    setShowAddNewExpense(true);
-  };
+    useEffect(() => {
+        fetchTransactions();
+    }, []);
 
-  return (
-    <>
-      {/* <Button variant="primary" onClick={handleShowAddNewExpense}>
-        Add New Expense
-      </Button>
-      {showAddNewExpense && <AddNewExpense />} */}
-    </>
-  );
+    const fetchTransactions = async () => {
+        const { data, error } = await supabase
+            .from<'transactions', Transaction>('transactions')
+            .select('*')
+            .order('id', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching expenses:', error);
+        } else if (data) {
+            setTransactions(data);
+        }
+        setFetchingTransactions(false);
+    };
+
+    return (
+        <>
+            {fetchingTransactions ? (
+                <div>
+                    <Spinner />
+                    <div>Loading Transactions...</div>
+                </div>
+            ) : (
+                <TransactionList transactions={transactions} />
+            )}
+        </>
+    );
 };
 
 export default Home;
