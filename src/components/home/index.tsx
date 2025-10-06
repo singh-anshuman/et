@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../../supabaseClient';
 import TransactionList from './TransactionList';
 import { Transaction } from './TransactionList/Transaction';
 import { Spinner } from 'react-bootstrap';
+import { getAllTransactions } from '../../services/transactionService';
 
 const Home: React.FC<{}> = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -14,11 +14,7 @@ const Home: React.FC<{}> = () => {
     }, []);
 
     const fetchTransactions = async () => {
-        const { data, error } = await supabase
-            .from<'transactions', Transaction>('transactions')
-            .select('*')
-            .order('id', { ascending: false });
-
+        const { data, error } = await getAllTransactions();
         if (error) {
             console.error('Error fetching expenses:', error);
         } else if (data) {

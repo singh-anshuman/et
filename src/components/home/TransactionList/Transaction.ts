@@ -1,10 +1,11 @@
 export type Transaction = {
-    id: number;
-    category: string;
-    amount: number;
-    split: string;
+    id?: number;
     transaction_date: Date;
-    nehu_owns_anshu: string;
     item_details: string;
+    amount?: number;
+    category: string;
+    split: string;
+    nehu_owns_anshu?: number;
+    entry_date: Date;
     is_expense: boolean;
 };
