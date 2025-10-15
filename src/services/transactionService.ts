@@ -21,18 +21,12 @@ export const getAllTransactions = async (): Promise<{
 
 export const insertTransaction = async (
     transaction: Transaction
-): Promise<{
-    data: Transaction | null;
-    error: any;
-}> => {
+): Promise<{ status: number }> => {
     return await supabase.from('transactions').insert([transaction]);
 };
 
 export const deleteTransaction = async (
     id: number
-): Promise<{
-    data: any | null;
-    error: any;
-}> => {
+): Promise<{ status: number }> => {
     return await supabase.from('transactions').delete().eq('id', id);
 };

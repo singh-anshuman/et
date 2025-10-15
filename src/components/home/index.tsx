@@ -3,6 +3,8 @@ import TransactionList from './TransactionList';
 import { Transaction } from './TransactionList/Transaction';
 import { Spinner } from 'react-bootstrap';
 import { getAllTransactions } from '../../services/transactionService';
+import Summary from './Summary';
+import QuickFilters from './QuickFilters';
 
 const Home: React.FC<{}> = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -23,6 +25,19 @@ const Home: React.FC<{}> = () => {
         setFetchingTransactions(false);
     };
 
+    const filterTransactionsByMonth = (month: string) => {
+        const [filterMonth, filterYear] = month.split(' ');
+        const filtered = transactions.filter((transaction) => {
+            const txn_date = new Date(transaction.transaction_date);
+            return (
+                txn_date.getMonth() ===
+                    new Date(`${filterMonth} 1, ${filterYear}`).getMonth() &&
+                txn_date.getFullYear() === parseInt(filterYear, 10)
+            );
+        });
+        setTransactions(filtered);
+    };
+
     return (
         <>
             {fetchingTransactions ? (
@@ -31,7 +46,14 @@ const Home: React.FC<{}> = () => {
                     <div>Loading Transactions...</div>
                 </div>
             ) : (
-                <TransactionList transactions={transactions} />
+                <>
+                    <Summary transactions={transactions} />
+                    <QuickFilters
+                        transactions={transactions}
+                        filterTransactionsByMonth={filterTransactionsByMonth}
+                    />
+                    <TransactionList transactions={transactions} />
+                </>
             )}
         </>
     );

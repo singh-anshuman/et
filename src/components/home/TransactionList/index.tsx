@@ -12,17 +12,23 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
     transactions,
 }) => {
-    const [rowData] = useState<Transaction[]>(transactions);
+    const [rowData, setRowData] = useState<Transaction[]>(transactions);
     const gridApi = useRef<GridApi | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string>('Hey');
+    const [successMessage, setSuccessMessage] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     const [colDefs] = useState<ColDef<Transaction | any>[]>([
-        { field: 'id', sort: 'desc', width: 80 },
-        { field: 'transaction_date', width: 140 },
-        { field: 'item_details', width: 150 },
+        { field: 'id', sort: 'desc', width: 80, headerName: 'ID' },
+        { field: 'transaction_date', width: 110, headerName: 'Txn Date' },
+        {
+            field: 'item_details',
+            width: 150,
+            headerName: 'Details',
+            tooltipField: 'item_details',
+        },
         {
             field: 'amount',
+            headerName: 'Amount',
             width: 130,
             valueFormatter: (params) => {
                 if (params.value != null) {
@@ -36,10 +42,11 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
         },
         {
             field: 'category',
-            width: 150,
+            width: 180,
             cellRenderer: (params: { value: any }) => {
                 return <Badge bg="dark">{params.value}</Badge>;
             },
+            tooltipField: 'category',
         },
         {
             field: 'split',
@@ -47,9 +54,11 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
             cellRenderer: (params: { value: any }) => {
                 return <Badge bg="secondary">{params.value}</Badge>;
             },
+            tooltipField: 'split',
         },
         {
             field: 'nehu_owns_anshu',
+            headerName: 'Nehu Owns Anshu',
             width: 150,
             valueFormatter: (params) => {
                 if (params.value != null) {
@@ -61,8 +70,8 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                 return params.value;
             },
         },
-        { field: 'entry_date', width: 110 },
-        { field: 'is_expense', width: 110 },
+        { field: 'entry_date', width: 110, headerName: 'Entry Date' },
+        { field: 'is_expense', width: 110, headerName: 'Is Expense' },
         {
             field: 'actions',
             width: 90,
@@ -87,17 +96,14 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
 
     const delTxn = async (id: number) => {
         console.log(`Delete transaction with id: ${id}`);
-        const { data, error } = await deleteTransaction(id);
-        if (error) {
-            console.error('Error inserting transactions:', error);
-            setErrorMessage(
-                `Error deleting transaction Transaction with ID ${id}: ${error.message}`
-            );
-        } else if (data) {
-            console.log('Transaction inserted successfully:', data);
-            setSuccessMessage(
-                `Transaction with ID ${id} deleted successfully!`
-            );
+        const data = await deleteTransaction(id);
+        if (data?.status == 204) {
+            setSuccessMessage(`Transaction deleted successfully!`);
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            setErrorMessage(`Error deleting transaction`);
         }
     };
 
@@ -116,28 +122,30 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                         bg={'success'}
                         autohide
                     >
-                        {/* <Toast.Header>
-                            <strong className="me-auto">Bootstrap</strong>
-                            <small>11 mins ago</small>
-                        </Toast.Header> */}
-                        <Toast.Body>{successMessage}</Toast.Body>
+                        <Toast.Body style={{ color: 'white' }}>
+                            {successMessage}
+                        </Toast.Body>
                     </Toast>
                 </ToastContainer>
             )}
             {errorMessage && (
-                <Toast
-                    onClose={() => setErrorMessage('')}
-                    show={errorMessage !== ''}
-                    delay={3000}
-                    bg={'danger'}
-                    autohide
+                <ToastContainer
+                    className="p-3"
+                    position="top-center"
+                    style={{ zIndex: 1 }}
                 >
-                    <Toast.Header>
-                        <strong>Bootstrap</strong>
-                        <small>11 mins ago</small>
-                    </Toast.Header>
-                    <Toast.Body>{errorMessage}</Toast.Body>
-                </Toast>
+                    <Toast
+                        onClose={() => setErrorMessage('')}
+                        show={errorMessage !== ''}
+                        delay={3000}
+                        bg={'danger'}
+                        autohide
+                    >
+                        <Toast.Body style={{ color: 'white' }}>
+                            {errorMessage}
+                        </Toast.Body>
+                    </Toast>
+                </ToastContainer>
             )}
             <div
                 className="ag-theme-alpine"
