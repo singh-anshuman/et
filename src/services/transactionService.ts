@@ -27,3 +27,12 @@ export const insertTransaction = async (
 }> => {
     return await supabase.from('transactions').insert([transaction]);
 };
+
+export const deleteTransaction = async (
+    id: number
+): Promise<{
+    data: any | null;
+    error: any;
+}> => {
+    return await supabase.from('transactions').delete().eq('id', id);
+};
