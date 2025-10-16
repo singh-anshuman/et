@@ -26,6 +26,7 @@ const blankTransaction: Transaction = {
     entry_date: new Date(),
     is_expense: true,
     nehu_owns_anshu: 0,
+    is_settled: false,
 };
 
 const AddEditTransaction: React.FC<{}> = () => {

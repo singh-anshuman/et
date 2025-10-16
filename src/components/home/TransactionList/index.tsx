@@ -6,14 +6,19 @@ import {
     Column,
     GridApi,
     RowClickedEvent,
+    SelectionChangedEvent,
 } from 'ag-grid-community';
 import { Transaction } from './Transaction';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { Toast, ToastContainer } from 'react-bootstrap';
-import { deleteTransaction } from '../../../services/transactionService';
+import { Button, Toast, ToastContainer } from 'react-bootstrap';
+import {
+    deleteTransaction,
+    markTransactionsAsSettled,
+} from '../../../services/transactionService';
 import { getTransactionListColumns } from './helper';
 import DeletionConfirmation from './DeletionConfirmation';
+import SelectionConfirmation from './SelectionConfirmation';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -27,6 +32,9 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
     const [colDefs, setColDefs] = useState<ColDef<Transaction | any>[]>();
     const [delTxnId, setDelTxnId] = useState<string>('');
     const [showDelConfirmation, setShowDelConfirmation] =
+        useState<boolean>(false);
+    const [selectedRows, setSelectedRows] = useState<Transaction[]>([]);
+    const [showSettlementConfirmation, setShowSettlementConfirmation] =
         useState<boolean>(false);
 
     useEffect(() => {
@@ -46,6 +54,10 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
     const hideDelConfirmation = () => {
         setShowDelConfirmation(false);
         setDelTxnId('');
+    };
+
+    const hideSettlementConfirmation = () => {
+        setShowSettlementConfirmation(false);
     };
 
     const delTxnConfirmation = (id: string) => {
@@ -75,6 +87,40 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
         },
         []
     );
+
+    const onSelectionChanged = useCallback(
+        (event: SelectionChangedEvent<Transaction>) => {
+            const selectedNodes = event.api.getSelectedNodes();
+            setSelectedRows(
+                selectedNodes.length > 0
+                    ? selectedNodes
+                          .map((node) => node.data)
+                          .filter(
+                              (data): data is Transaction => data !== undefined
+                          )
+                    : []
+            );
+        },
+        []
+    );
+
+    const settleTransactions = () => {
+        markTransactionsAsSettled(selectedRows.map((txn) => txn.id!)).then(
+            (data) => {
+                setShowSettlementConfirmation(false);
+                if (data?.status == 204) {
+                    setSuccessMessage(
+                        `Selected transactions marked as settled!`
+                    );
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    setErrorMessage(`Error marking transactions as settled`);
+                }
+            }
+        );
+    };
 
     return (
         <>
@@ -124,10 +170,34 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                     hideDelConfirmation={hideDelConfirmation}
                 />
             )}
+            {showSettlementConfirmation && (
+                <SelectionConfirmation
+                    settleTransactions={settleTransactions}
+                    showSettlementConfirmation={showSettlementConfirmation}
+                    hideSettlementConfirmation={hideSettlementConfirmation}
+                />
+            )}
+            {selectedRows.length > 0 && (
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'end',
+                        margin: '20px 0 10px 0',
+                    }}
+                >
+                    <Button
+                        variant="success"
+                        type="submit"
+                        onClick={() => setShowSettlementConfirmation(true)}
+                    >
+                        Mark as Settled
+                    </Button>
+                </div>
+            )}
             <div
                 className="ag-theme-alpine"
                 style={{
-                    height: '600px',
+                    height: '500px',
                     marginTop: '20px',
                 }}
             >
@@ -137,7 +207,18 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                     pagination={true}
                     paginationPageSize={20}
                     onGridReady={onGridReady}
-                    getRowStyle={() => ({ cursor: 'pointer' })}
+                    rowSelection={{
+                        mode: 'multiRow',
+                        headerCheckbox: true,
+                        isRowSelectable: (node) => !node.data?.is_settled,
+                    }}
+                    getRowStyle={(params) => ({
+                        cursor: 'pointer',
+                        backgroundColor: params.data?.is_settled
+                            ? '#e8feedff'
+                            : '#FFFFFF',
+                    })}
+                    onSelectionChanged={onSelectionChanged}
                 />
             </div>
         </>

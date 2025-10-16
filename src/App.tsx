@@ -1,5 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import Home from './components/Home';
 import { Container } from 'react-bootstrap';
 import AppHeader from './components/AppHeader';
@@ -16,6 +17,7 @@ function App() {
                     path="/add-edit-transaction"
                     element={<AddEditTransaction />}
                 />
+                <Route path="*" element={<Home />} />
             </Routes>
         </Container>
     );

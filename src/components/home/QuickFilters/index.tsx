@@ -18,9 +18,10 @@ const QuickFilters: React.FC<{
         <div
             style={{
                 display: 'flex',
-                justifyContent: 'end',
+                justifyContent: 'start',
+                alignItems: 'center', // Added for vertical alignment
                 gap: '10px',
-                marginBottom: '20px',
+                // marginBottom: '20px',
             }}
         >
             {getMonths().map((m) => {

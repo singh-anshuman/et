@@ -46,6 +46,15 @@ export const updateTransaction = async (
         .eq('id', id);
 };
 
+export const markTransactionsAsSettled = async (
+    transactionIds: number[]
+): Promise<{ status: number }> => {
+    return await supabase
+        .from('transactions')
+        .update({ is_settled: true })
+        .in('id', transactionIds);
+};
+
 export const deleteTransaction = async (
     id: number
 ): Promise<{ status: number }> => {

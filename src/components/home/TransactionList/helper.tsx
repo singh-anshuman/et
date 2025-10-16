@@ -22,7 +22,7 @@ export const getTransactionListColumns = (
         },
         {
             field: 'item_details',
-            width: 150,
+            width: 200,
             headerName: 'Details',
             tooltipField: 'item_details',
             onCellClicked: (event) => editTransaction(event),
@@ -30,7 +30,7 @@ export const getTransactionListColumns = (
         {
             field: 'amount',
             headerName: 'Amount',
-            width: 130,
+            width: 120,
             onCellClicked: (event) => editTransaction(event),
             valueFormatter: (params: { value: any }) => {
                 if (params.value != null) {
@@ -44,7 +44,7 @@ export const getTransactionListColumns = (
         },
         {
             field: 'category',
-            width: 180,
+            width: 160,
             onCellClicked: (event) => editTransaction(event),
             cellRenderer: (params: { value: any }) => {
                 return <Badge bg="dark">{params.value}</Badge>;
@@ -53,7 +53,7 @@ export const getTransactionListColumns = (
         },
         {
             field: 'split',
-            width: 170,
+            width: 160,
             onCellClicked: (event) => editTransaction(event),
             cellRenderer: (params: { value: any }) => {
                 return <Badge bg="secondary">{params.value}</Badge>;
@@ -98,26 +98,30 @@ export const getTransactionListColumns = (
         },
         {
             field: 'is_expense',
-            width: 110,
-            headerName: 'Is Expense',
+            width: 90,
+            headerName: 'Expense',
             onCellClicked: (event) => editTransaction(event),
+            cellRenderer: (params: { value: any }) => {
+                return params.value ? (
+                    <span style={{ display: 'flex', justifyContent: 'center' }}>
+                        ✔
+                    </span>
+                ) : null;
+            },
         },
         {
-            field: 'actions',
-            width: 90,
+            field: '',
+            width: 50,
             cellRenderer: (params: { data: any; value: any }) => {
                 return (
-                    <Button
-                        variant="danger"
-                        type="submit"
-                        size="sm"
+                    <i
+                        className="bi bi-trash"
+                        style={{ color: 'red', cursor: 'pointer' }}
                         onClick={(e) => {
                             e.stopPropagation();
                             delTxnConfirmation(params.data.id);
                         }}
-                    >
-                        Del
-                    </Button>
+                    ></i>
                 );
             },
         },

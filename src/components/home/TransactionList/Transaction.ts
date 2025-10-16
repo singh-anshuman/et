@@ -8,4 +8,5 @@ export type Transaction = {
     nehu_owns_anshu?: number;
     entry_date: Date;
     is_expense: boolean;
+    is_settled: boolean;
 };

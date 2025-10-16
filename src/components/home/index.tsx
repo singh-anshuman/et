@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import TransactionList from './TransactionList';
 import { Transaction } from './TransactionList/Transaction';
-import { Spinner } from 'react-bootstrap';
+import { Col, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap';
 import { getAllTransactions } from '../../services/transactionService';
 import Summary from './Summary';
 import QuickFilters from './QuickFilters';
@@ -12,6 +12,7 @@ const Home: React.FC<{}> = () => {
     const [fetchingTransactions, setFetchingTransactions] =
         useState<boolean>(true);
     const [selectedFilter, setSelectedFilter] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     useEffect(() => {
         fetchTransactions();
@@ -20,7 +21,7 @@ const Home: React.FC<{}> = () => {
     const fetchTransactions = async () => {
         const { data, error } = await getAllTransactions();
         if (error) {
-            console.error('Error fetching expenses:', error);
+            setErrorMessage(`Error fetching transactions`);
         } else if (data) {
             setTransactions(data);
             setAllTransactions(data);
@@ -51,6 +52,25 @@ const Home: React.FC<{}> = () => {
 
     return (
         <>
+            {errorMessage && (
+                <ToastContainer
+                    className="p-3"
+                    position="top-center"
+                    style={{ zIndex: 1 }}
+                >
+                    <Toast
+                        onClose={() => setErrorMessage('')}
+                        show={errorMessage !== ''}
+                        delay={3000}
+                        bg={'danger'}
+                        autohide
+                    >
+                        <Toast.Body style={{ color: 'white' }}>
+                            {errorMessage}
+                        </Toast.Body>
+                    </Toast>
+                </ToastContainer>
+            )}
             {fetchingTransactions ? (
                 <div>
                     <Spinner />
@@ -58,12 +78,22 @@ const Home: React.FC<{}> = () => {
                 </div>
             ) : (
                 <>
-                    <Summary transactions={transactions} />
-                    <QuickFilters
-                        transactions={allTransactions}
-                        filterTransactionsByMonth={filterTransactionsByMonth}
-                        selectedFilter={selectedFilter}
-                    />
+                    <div style={{ marginTop: '20px' }}>
+                        <Row>
+                            <Col md={9}>
+                                <QuickFilters
+                                    transactions={allTransactions}
+                                    filterTransactionsByMonth={
+                                        filterTransactionsByMonth
+                                    }
+                                    selectedFilter={selectedFilter}
+                                />
+                            </Col>
+                            <Col md={3}>
+                                <Summary transactions={transactions} />
+                            </Col>
+                        </Row>
+                    </div>
                     <TransactionList transactions={transactions} />
                 </>
             )}
