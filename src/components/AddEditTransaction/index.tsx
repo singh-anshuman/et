@@ -254,6 +254,7 @@ const AddEditTransaction: React.FC<{}> = () => {
                                     name="amount"
                                     value={transactionDetails.amount}
                                     placeholder="Enter Amount"
+                                    inputMode="numeric"
                                     onChange={handleChange}
                                 />
                             </FloatingLabel>
