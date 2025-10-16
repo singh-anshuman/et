@@ -82,7 +82,7 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
     const editTransaction = useCallback(
         (event: CellClickedEvent<Transaction>) => {
             window.location.assign(
-                `${window.location.origin}/#add-edit-transaction?txn-id=${event.data?.id}`
+                `${window.location.origin}/et#add-edit-transaction?txn-id=${event.data?.id}`
             );
         },
         []
