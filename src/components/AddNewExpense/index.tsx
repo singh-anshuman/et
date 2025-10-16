@@ -82,7 +82,12 @@ const AddNewExpense: React.FC<{}> = () => {
                 : undefined;
         setTransactionDetails({
             ...transactionDetails,
-            [name]: type === 'checkbox' ? checked : value,
+            [name]:
+                name === 'transaction_date'
+                    ? new Date(value)
+                    : type === 'checkbox'
+                      ? checked
+                      : value,
             nehu_owns_anshu: calculateNehuOwnsAnshu(
                 name == 'amount' ? value : transactionDetails.amount,
                 name == 'split' ? value : transactionDetails.split
