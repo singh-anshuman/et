@@ -1,11 +1,19 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
+import {
+    CellClickedEvent,
+    ColDef,
+    Column,
+    GridApi,
+    RowClickedEvent,
+} from 'ag-grid-community';
 import { Transaction } from './Transaction';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { Badge, Button, Toast, ToastContainer } from 'react-bootstrap';
+import { Toast, ToastContainer } from 'react-bootstrap';
 import { deleteTransaction } from '../../../services/transactionService';
+import { getTransactionListColumns } from './helper';
+import DeletionConfirmation from './DeletionConfirmation';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -16,96 +24,57 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
     const gridApi = useRef<GridApi | null>(null);
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [colDefs, setColDefs] = useState<ColDef<Transaction | any>[]>();
+    const [delTxnId, setDelTxnId] = useState<string>('');
+    const [showDelConfirmation, setShowDelConfirmation] =
+        useState<boolean>(false);
 
-    const [colDefs] = useState<ColDef<Transaction | any>[]>([
-        { field: 'id', sort: 'desc', width: 80, headerName: 'ID' },
-        { field: 'transaction_date', width: 110, headerName: 'Txn Date' },
-        {
-            field: 'item_details',
-            width: 150,
-            headerName: 'Details',
-            tooltipField: 'item_details',
-        },
-        {
-            field: 'amount',
-            headerName: 'Amount',
-            width: 130,
-            valueFormatter: (params) => {
-                if (params.value != null) {
-                    return new Intl.NumberFormat('en-IN', {
-                        style: 'currency',
-                        currency: 'INR',
-                    }).format(params.value);
-                }
-                return params.value;
-            },
-        },
-        {
-            field: 'category',
-            width: 180,
-            cellRenderer: (params: { value: any }) => {
-                return <Badge bg="dark">{params.value}</Badge>;
-            },
-            tooltipField: 'category',
-        },
-        {
-            field: 'split',
-            width: 170,
-            cellRenderer: (params: { value: any }) => {
-                return <Badge bg="secondary">{params.value}</Badge>;
-            },
-            tooltipField: 'split',
-        },
-        {
-            field: 'nehu_owns_anshu',
-            headerName: 'Nehu Owns Anshu',
-            width: 150,
-            valueFormatter: (params) => {
-                if (params.value != null) {
-                    return new Intl.NumberFormat('en-IN', {
-                        style: 'currency',
-                        currency: 'INR',
-                    }).format(params.value);
-                }
-                return params.value;
-            },
-        },
-        { field: 'entry_date', width: 110, headerName: 'Entry Date' },
-        { field: 'is_expense', width: 110, headerName: 'Is Expense' },
-        {
-            field: 'actions',
-            width: 90,
-            cellRenderer: (params: { data: any; value: any }) => {
-                return (
-                    <Button
-                        variant="danger"
-                        type="submit"
-                        size="sm"
-                        onClick={() => delTxn(params.data.id)}
-                    >
-                        Del
-                    </Button>
-                );
-            },
-        },
-    ]);
+    useEffect(() => {
+        setColDefs(
+            getTransactionListColumns(delTxnConfirmation, editTransaction)
+        );
+    }, []);
+
+    useEffect(() => {
+        setRowData(transactions);
+    }, [transactions]);
 
     const onGridReady = useCallback((params: { api: GridApi }) => {
         gridApi.current = params.api;
     }, []);
 
+    const hideDelConfirmation = () => {
+        setShowDelConfirmation(false);
+        setDelTxnId('');
+    };
+
+    const delTxnConfirmation = (id: string) => {
+        setDelTxnId(id);
+        setShowDelConfirmation(true);
+    };
+
     const delTxn = async (id: number) => {
-        console.log(`Delete transaction with id: ${id}`);
         const data = await deleteTransaction(id);
         if (data?.status == 204) {
             setSuccessMessage(`Transaction deleted successfully!`);
+            setShowDelConfirmation(false);
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
         } else {
             setErrorMessage(`Error deleting transaction`);
         }
+        setDelTxnId('');
     };
+
+    const editTransaction = useCallback(
+        (event: CellClickedEvent<Transaction>) => {
+            window.location.assign(
+                `${window.location.origin}/#add-edit-transaction?txn-id=${event.data?.id}`
+            );
+        },
+        []
+    );
 
     return (
         <>
@@ -147,6 +116,14 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                     </Toast>
                 </ToastContainer>
             )}
+            {showDelConfirmation && (
+                <DeletionConfirmation
+                    delTxn={delTxn}
+                    txnId={delTxnId}
+                    showDelConfirmation={showDelConfirmation}
+                    hideDelConfirmation={hideDelConfirmation}
+                />
+            )}
             <div
                 className="ag-theme-alpine"
                 style={{
@@ -160,6 +137,7 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                     pagination={true}
                     paginationPageSize={20}
                     onGridReady={onGridReady}
+                    getRowStyle={() => ({ cursor: 'pointer' })}
                 />
             </div>
         </>

@@ -8,8 +8,10 @@ import QuickFilters from './QuickFilters';
 
 const Home: React.FC<{}> = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
     const [fetchingTransactions, setFetchingTransactions] =
         useState<boolean>(true);
+    const [selectedFilter, setSelectedFilter] = useState<string>('');
 
     useEffect(() => {
         fetchTransactions();
@@ -21,21 +23,30 @@ const Home: React.FC<{}> = () => {
             console.error('Error fetching expenses:', error);
         } else if (data) {
             setTransactions(data);
+            setAllTransactions(data);
         }
         setFetchingTransactions(false);
     };
 
     const filterTransactionsByMonth = (month: string) => {
-        const [filterMonth, filterYear] = month.split(' ');
-        const filtered = transactions.filter((transaction) => {
-            const txn_date = new Date(transaction.transaction_date);
-            return (
-                txn_date.getMonth() ===
-                    new Date(`${filterMonth} 1, ${filterYear}`).getMonth() &&
-                txn_date.getFullYear() === parseInt(filterYear, 10)
-            );
-        });
-        setTransactions(filtered);
+        if (month === selectedFilter) {
+            setSelectedFilter('');
+            setTransactions(allTransactions);
+        } else {
+            setSelectedFilter(month);
+            const [filterMonth, filterYear] = month.split('-');
+            const filtered = allTransactions.filter((transaction) => {
+                const txn_date = new Date(transaction.transaction_date);
+                return (
+                    txn_date.getMonth() ===
+                        new Date(
+                            `${filterMonth} 1, ${filterYear}`
+                        ).getMonth() &&
+                    txn_date.getFullYear() === parseInt(filterYear, 10)
+                );
+            });
+            setTransactions(filtered);
+        }
     };
 
     return (
@@ -49,8 +60,9 @@ const Home: React.FC<{}> = () => {
                 <>
                     <Summary transactions={transactions} />
                     <QuickFilters
-                        transactions={transactions}
+                        transactions={allTransactions}
                         filterTransactionsByMonth={filterTransactionsByMonth}
+                        selectedFilter={selectedFilter}
                     />
                     <TransactionList transactions={transactions} />
                 </>

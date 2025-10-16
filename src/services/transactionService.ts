@@ -19,10 +19,31 @@ export const getAllTransactions = async (): Promise<{
         .order('id', { ascending: false });
 };
 
+export const getTransactionById = async (
+    txnId: number
+): Promise<{ status: number; data: any }> => {
+    return await supabase
+        .from('transactions')
+        .select('*')
+        .eq('id', txnId)
+        .single();
+};
+
 export const insertTransaction = async (
     transaction: Transaction
 ): Promise<{ status: number }> => {
     return await supabase.from('transactions').insert([transaction]);
+};
+
+export const updateTransaction = async (
+    id: number,
+    updatedTransaction: Partial<Transaction>
+): Promise<{ status: number }> => {
+    const partialTransaction: Partial<Transaction> = { ...updatedTransaction };
+    return await supabase
+        .from('transactions')
+        .update(partialTransaction)
+        .eq('id', id);
 };
 
 export const deleteTransaction = async (
