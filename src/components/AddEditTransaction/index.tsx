@@ -223,6 +223,7 @@ const AddEditTransaction: React.FC<{}> = () => {
                                 >
                                     <Form.Control
                                         type="date"
+                                        required
                                         name="transaction_date"
                                         placeholder="Enter transaction date"
                                         value={
@@ -258,6 +259,7 @@ const AddEditTransaction: React.FC<{}> = () => {
                                 <Form.Control
                                     type="text"
                                     name="item_details"
+                                    required
                                     placeholder="Enter Item Details"
                                     value={transactionDetails.item_details}
                                     onChange={handleChange}

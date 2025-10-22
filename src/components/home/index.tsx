@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react';
 import TransactionList from './TransactionList';
 import { Transaction } from './TransactionList/Transaction';
-import { Col, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap';
+import {
+    Col,
+    Row,
+    Spinner,
+    Tab,
+    Tabs,
+    Toast,
+    ToastContainer,
+} from 'react-bootstrap';
 import { getAllTransactions } from '../../services/transactionService';
 import Summary from './Summary';
 import QuickFilters from './QuickFilters';
+import TransactionCards from './TransactionCards';
 
 const Home: React.FC<{}> = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -13,9 +22,21 @@ const Home: React.FC<{}> = () => {
         useState<boolean>(true);
     const [selectedFilter, setSelectedFilter] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [selectedTab, setSelectedTab] = useState<string>('table');
 
     useEffect(() => {
         fetchTransactions();
+        const mq: any = window.matchMedia('(max-width: 767px)');
+        const updateTab = (e?: any) =>
+            setSelectedTab((e ? e.matches : mq.matches) ? 'card' : 'table');
+        updateTab();
+        if (mq.addEventListener) mq.addEventListener('change', updateTab);
+        else mq.addListener(updateTab);
+        return () => {
+            if (mq.removeEventListener)
+                mq.removeEventListener('change', updateTab);
+            else mq.removeListener(updateTab);
+        };
     }, []);
 
     const fetchTransactions = async () => {
@@ -72,7 +93,7 @@ const Home: React.FC<{}> = () => {
                 </ToastContainer>
             )}
             {fetchingTransactions ? (
-                <div>
+                <div style={{ textAlign: 'center', marginTop: '200px' }}>
                     <Spinner />
                     <div>Loading Transactions...</div>
                 </div>
@@ -94,7 +115,18 @@ const Home: React.FC<{}> = () => {
                             </Col>
                         </Row>
                     </div>
-                    <TransactionList transactions={transactions} />
+                    <Tabs
+                        defaultActiveKey={selectedTab}
+                        id="transaction-list-tabs"
+                        style={{ marginTop: '20px' }}
+                    >
+                        <Tab eventKey="table" title="Table View">
+                            <TransactionList transactions={transactions} />
+                        </Tab>
+                        <Tab eventKey="card" title="Card View">
+                            <TransactionCards transactions={transactions} />
+                        </Tab>
+                    </Tabs>
                 </>
             )}
         </div>
