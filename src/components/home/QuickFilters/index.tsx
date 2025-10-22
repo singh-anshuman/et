@@ -1,6 +1,5 @@
 import { Badge } from 'react-bootstrap';
 import { Transaction } from '../TransactionList/Transaction';
-import { useEffect } from 'react';
 
 const QuickFilters: React.FC<{
     transactions: Transaction[];

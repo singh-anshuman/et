@@ -325,7 +325,22 @@ const AddEditTransaction: React.FC<{}> = () => {
                                     type="submit"
                                     disabled={txnInProgress}
                                 >
-                                    Save
+                                    {txnInProgress ? (
+                                        <>
+                                            <Spinner
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                            />
+                                            <span style={{ marginLeft: '5px' }}>
+                                                Saving...
+                                            </span>
+                                        </>
+                                    ) : (
+                                        'Save'
+                                    )}
                                 </Button>
                             </div>
                         </Form>
