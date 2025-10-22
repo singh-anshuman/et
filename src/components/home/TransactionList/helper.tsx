@@ -16,13 +16,13 @@ export const getTransactionListColumns = (
         },
         {
             field: 'transaction_date',
-            width: 110,
+            width: 120,
             headerName: 'Txn Date',
             onCellClicked: (event) => editTransaction(event),
         },
         {
             field: 'item_details',
-            width: 200,
+            width: 240,
             headerName: 'Details',
             tooltipField: 'item_details',
             onCellClicked: (event) => editTransaction(event),
@@ -44,7 +44,7 @@ export const getTransactionListColumns = (
         },
         {
             field: 'category',
-            width: 160,
+            width: 180,
             onCellClicked: (event) => editTransaction(event),
             cellRenderer: (params: { value: any }) => {
                 return <Badge bg="dark">{params.value}</Badge>;
@@ -53,7 +53,7 @@ export const getTransactionListColumns = (
         },
         {
             field: 'split',
-            width: 160,
+            width: 200,
             onCellClicked: (event) => editTransaction(event),
             cellRenderer: (params: { value: any }) => {
                 return <Badge bg="secondary">{params.value}</Badge>;
@@ -63,7 +63,7 @@ export const getTransactionListColumns = (
         {
             field: 'nehu_owns_anshu',
             headerName: 'Nehu Owns Anshu',
-            width: 150,
+            width: 160,
             onCellClicked: (event) => editTransaction(event),
             cellRenderer: (params: { value: any }) => {
                 if (params.value != null) {
@@ -92,13 +92,13 @@ export const getTransactionListColumns = (
         },
         {
             field: 'entry_date',
-            width: 110,
+            width: 120,
             headerName: 'Entry Date',
             onCellClicked: (event) => editTransaction(event),
         },
         {
             field: 'is_expense',
-            width: 90,
+            width: 100,
             headerName: 'Expense',
             onCellClicked: (event) => editTransaction(event),
             cellRenderer: (params: { value: any }) => {

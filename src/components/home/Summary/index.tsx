@@ -21,13 +21,13 @@ const Summary: React.FC<{ transactions: Transaction[] }> = ({
         <div
             style={{
                 border: '1px solid lightgrey',
-                padding: '10px 15px 6px 15px',
+                padding: '12px 15px 6px 15px',
                 borderRadius: '5px',
                 display: 'flex',
-                justifyContent: 'right',
+                justifyContent: 'center',
             }}
         >
-            <h5>
+            <h6>
                 Nehu Owns Anshu:{' '}
                 <b
                     style={{
@@ -44,7 +44,7 @@ const Summary: React.FC<{ transactions: Transaction[] }> = ({
                         currency: 'INR',
                     })}
                 </b>
-            </h5>
+            </h6>
         </div>
     );
 };

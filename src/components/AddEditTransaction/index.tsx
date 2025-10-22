@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import {
     Button,
+    Col,
     FloatingLabel,
     Form,
+    Row,
     Spinner,
     Toast,
     ToastContainer,
@@ -198,41 +200,59 @@ const AddEditTransaction: React.FC<{}> = () => {
                             margin: '0 auto',
                         }}
                     >
+                        <div className="d-flex justify-content-between align-items-center p-2 border rounded bg-light">
+                            <div>
+                                <div className="text-muted small">ID</div>
+                                <div>{transactionDetails.id ?? '-'}</div>
+                            </div>
+                            <div className="text-end">
+                                <div className="text-muted small">
+                                    Entry Date
+                                </div>
+                                <div>
+                                    {transactionDetails.entry_date.toLocaleDateString()}
+                                </div>
+                            </div>
+                        </div>
                         <Form onSubmit={addEditTransaction}>
-                            <FloatingLabel
-                                style={{ marginTop: '10px' }}
-                                controlId="tranaction_id"
-                                label="ID"
-                                className="mb-3"
-                            >
-                                <Form.Control
-                                    type="number"
-                                    value={transactionDetails.id}
-                                    readOnly
-                                />
-                            </FloatingLabel>
-                            <FloatingLabel
-                                style={{ marginTop: '10px' }}
-                                controlId="transaction_date"
-                                label="Transaction Date"
-                                className="mb-3"
-                            >
-                                <Form.Control
-                                    type="date"
-                                    name="transaction_date"
-                                    placeholder="Enter transaction date"
-                                    value={
-                                        transactionDetails.transaction_date
-                                            .toISOString()
-                                            .split('T')[0]
-                                    }
-                                    onChange={handleChange}
-                                />
-                            </FloatingLabel>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <FloatingLabel
+                                    style={{ marginTop: '20px' }}
+                                    controlId="transaction_date"
+                                    label="Txn Date"
+                                >
+                                    <Form.Control
+                                        type="date"
+                                        name="transaction_date"
+                                        placeholder="Enter transaction date"
+                                        value={
+                                            transactionDetails.transaction_date
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
+                                        onChange={handleChange}
+                                    />
+                                </FloatingLabel>
+                                <FloatingLabel
+                                    style={{ marginTop: '20px' }}
+                                    controlId="amount"
+                                    label="Amount (₹)"
+                                >
+                                    <Form.Control
+                                        type="number"
+                                        name="amount"
+                                        value={transactionDetails.amount}
+                                        placeholder="Enter Amount"
+                                        inputMode="decimal"
+                                        onChange={handleChange}
+                                    />
+                                </FloatingLabel>
+                            </div>
+
                             <FloatingLabel
                                 controlId="item_details"
                                 label="Item Details"
-                                style={{ marginTop: '10px' }}
+                                style={{ marginTop: '20px' }}
                                 className="mb-3"
                             >
                                 <Form.Control
@@ -243,21 +263,7 @@ const AddEditTransaction: React.FC<{}> = () => {
                                     onChange={handleChange}
                                 />
                             </FloatingLabel>
-                            <FloatingLabel
-                                style={{ marginTop: '10px' }}
-                                controlId="amount"
-                                label="Amount (₹)"
-                                className="mb-3"
-                            >
-                                <Form.Control
-                                    type="number"
-                                    name="amount"
-                                    value={transactionDetails.amount}
-                                    placeholder="Enter Amount"
-                                    inputMode="decimal"
-                                    onChange={handleChange}
-                                />
-                            </FloatingLabel>
+
                             <FloatingLabel
                                 controlId="cateogry"
                                 label="Category"
@@ -310,38 +316,47 @@ const AddEditTransaction: React.FC<{}> = () => {
                                     readOnly
                                 />
                             </FloatingLabel>
-                            <Form.Group className="mb-3" controlId="is_expense">
-                                <Form.Check
-                                    type="checkbox"
-                                    name="is_expense"
-                                    label="Expense"
-                                    onChange={handleChange}
-                                    checked={transactionDetails.is_expense}
-                                />
-                            </Form.Group>
-                            <div style={{ textAlign: 'right' }}>
-                                <Button
-                                    variant="primary"
-                                    type="submit"
-                                    disabled={txnInProgress}
+                            <div className="d-flex justify-content-between align-items-center p-2">
+                                <Form.Group
+                                    className="mb-3"
+                                    controlId="is_expense"
                                 >
-                                    {txnInProgress ? (
-                                        <>
-                                            <Spinner
-                                                as="span"
-                                                animation="border"
-                                                size="sm"
-                                                role="status"
-                                                aria-hidden="true"
-                                            />
-                                            <span style={{ marginLeft: '5px' }}>
-                                                Saving...
-                                            </span>
-                                        </>
-                                    ) : (
-                                        'Save'
-                                    )}
-                                </Button>
+                                    <Form.Check
+                                        type="checkbox"
+                                        name="is_expense"
+                                        label="Expense"
+                                        onChange={handleChange}
+                                        checked={transactionDetails.is_expense}
+                                    />
+                                </Form.Group>
+                                <div className="text-end">
+                                    <Button
+                                        variant="success"
+                                        type="submit"
+                                        disabled={txnInProgress}
+                                    >
+                                        {txnInProgress ? (
+                                            <>
+                                                <Spinner
+                                                    as="span"
+                                                    animation="border"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                />
+                                                <span
+                                                    style={{
+                                                        marginLeft: '5px',
+                                                    }}
+                                                >
+                                                    Saving...
+                                                </span>
+                                            </>
+                                        ) : (
+                                            'Save'
+                                        )}
+                                    </Button>
+                                </div>
                             </div>
                         </Form>
                     </div>

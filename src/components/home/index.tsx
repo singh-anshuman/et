@@ -51,7 +51,7 @@ const Home: React.FC<{}> = () => {
     };
 
     return (
-        <>
+        <div style={{ padding: '20px' }}>
             {errorMessage && (
                 <ToastContainer
                     className="p-3"
@@ -80,7 +80,7 @@ const Home: React.FC<{}> = () => {
                 <>
                     <div style={{ marginTop: '20px' }}>
                         <Row>
-                            <Col md={9}>
+                            <Col md={8}>
                                 <QuickFilters
                                     transactions={allTransactions}
                                     filterTransactionsByMonth={
@@ -89,7 +89,7 @@ const Home: React.FC<{}> = () => {
                                     selectedFilter={selectedFilter}
                                 />
                             </Col>
-                            <Col md={3}>
+                            <Col md={4}>
                                 <Summary transactions={transactions} />
                             </Col>
                         </Row>
@@ -97,7 +97,7 @@ const Home: React.FC<{}> = () => {
                     <TransactionList transactions={transactions} />
                 </>
             )}
-        </>
+        </div>
     );
 };
 

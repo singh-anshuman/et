@@ -197,7 +197,7 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
             <div
                 className="ag-theme-alpine"
                 style={{
-                    height: '500px',
+                    height: '550px',
                     marginTop: '20px',
                 }}
             >

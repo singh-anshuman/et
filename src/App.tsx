@@ -9,7 +9,7 @@ import AddEditTransaction from './components/AddEditTransaction';
 
 function App() {
     return (
-        <Container className="p-3">
+        <Container fluid className="p-0 m-0 app-container">
             <AppHeader />
             <Routes>
                 <Route path="/" element={<Home />} />
