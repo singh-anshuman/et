@@ -13,12 +13,18 @@ const AppHeader: React.FC<{}> = () => {
                 <Navbar.Brand href="/et">Balancio</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
+                    <Nav>
                         <Nav.Link href="#add-edit-transaction">
                             <i className="bi bi-plus-circle-fill"></i>
                             <span style={{ marginLeft: '5px' }}>
                                 Add Transaction
                             </span>
+                        </Nav.Link>
+                    </Nav>
+                    <Nav>
+                        <Nav.Link href="#reports">
+                            <i className="bi bi-bar-chart-line-fill"></i>
+                            <span style={{ marginLeft: '5px' }}>Reports</span>
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

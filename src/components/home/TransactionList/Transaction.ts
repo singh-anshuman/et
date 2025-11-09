@@ -9,4 +9,5 @@ export type Transaction = {
     entry_date: Date;
     is_expense: boolean;
     is_settled: boolean;
+    to_be_updated: boolean;
 };

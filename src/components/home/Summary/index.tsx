@@ -13,6 +13,7 @@ const Summary: React.FC<{ transactions: Transaction[] }> = ({
     const getNehuOwnsAnshuAmount = (): number => {
         return transactions
             .filter((txn) => !txn.is_settled)
+            .filter((txn) => !txn.to_be_updated)
             .reduce((total, txn) => {
                 return total + (txn.nehu_owns_anshu || 0);
             }, 0);

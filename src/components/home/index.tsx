@@ -3,6 +3,7 @@ import TransactionList from './TransactionList';
 import { Transaction } from './TransactionList/Transaction';
 import {
     Col,
+    Form,
     Row,
     Spinner,
     Tab,
@@ -23,6 +24,8 @@ const Home: React.FC<{}> = () => {
     const [selectedFilter, setSelectedFilter] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [selectedTab, setSelectedTab] = useState<string>('table');
+    const [quickFilterText, setQuickFilterText] = useState<string>('');
+    const [toBeUpdated, setToBeUpdated] = useState<boolean>(false);
 
     useEffect(() => {
         fetchTransactions();
@@ -99,31 +102,101 @@ const Home: React.FC<{}> = () => {
                 </div>
             ) : (
                 <>
-                    <div style={{ marginTop: '20px' }}>
-                        <Row>
-                            <Col md={8}>
-                                <QuickFilters
-                                    transactions={allTransactions}
-                                    filterTransactionsByMonth={
-                                        filterTransactionsByMonth
-                                    }
-                                    selectedFilter={selectedFilter}
-                                />
-                            </Col>
-                            <Col md={4}>
-                                <Summary transactions={transactions} />
-                            </Col>
-                        </Row>
+                    <Row>
+                        <Col md={8}>
+                            <QuickFilters
+                                transactions={allTransactions}
+                                filterTransactionsByMonth={
+                                    filterTransactionsByMonth
+                                }
+                                selectedFilter={selectedFilter}
+                            />
+                        </Col>
+                        <Col md={4}>
+                            <Summary transactions={transactions} />
+                        </Col>
+                    </Row>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginTop: '5px',
+                        }}
+                    >
+                        <div
+                            style={{
+                                flex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Form.Control
+                                type="text"
+                                style={{
+                                    marginLeft: '200px',
+                                    maxWidth: '400px',
+                                    width: '100%',
+                                    textAlign: 'center',
+                                }}
+                                size="sm"
+                                placeholder="Search Transactions"
+                                value={quickFilterText}
+                                onChange={(e) =>
+                                    setQuickFilterText(e.target.value)
+                                }
+                            />
+                        </div>
+                        <Form.Group controlId="to_be_updated">
+                            <Form.Check
+                                style={{ marginTop: '10px' }}
+                                type="checkbox"
+                                name="to_be_updated"
+                                label="Filter Pending Transactions"
+                                onChange={(e) => {
+                                    const checked = e.target.checked;
+                                    setToBeUpdated(checked);
+                                    setTransactions(
+                                        checked
+                                            ? allTransactions.filter(
+                                                  (txn) => txn.to_be_updated
+                                              )
+                                            : allTransactions
+                                    );
+                                }}
+                                checked={toBeUpdated}
+                            />
+                        </Form.Group>
                     </div>
                     <Tabs
                         defaultActiveKey={selectedTab}
                         id="transaction-list-tabs"
-                        style={{ marginTop: '20px' }}
                     >
-                        <Tab eventKey="table" title="Table View">
-                            <TransactionList transactions={transactions} />
+                        <Tab
+                            eventKey="table"
+                            title={
+                                <span
+                                    style={{ fontSize: '13px', color: 'black' }}
+                                >
+                                    Table View
+                                </span>
+                            }
+                        >
+                            <TransactionList
+                                transactions={transactions}
+                                quickFilterText={quickFilterText}
+                            />
                         </Tab>
-                        <Tab eventKey="card" title="Card View">
+                        <Tab
+                            eventKey="card"
+                            title={
+                                <span
+                                    style={{ fontSize: '13px', color: 'black' }}
+                                >
+                                    Card View
+                                </span>
+                            }
+                        >
                             <TransactionCards transactions={transactions} />
                         </Tab>
                     </Tabs>

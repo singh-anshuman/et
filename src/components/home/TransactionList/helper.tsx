@@ -22,7 +22,7 @@ export const getTransactionListColumns = (
         },
         {
             field: 'item_details',
-            width: 240,
+            width: 220,
             headerName: 'Details',
             tooltipField: 'item_details',
             onCellClicked: (event) => editTransaction(event),
@@ -30,7 +30,7 @@ export const getTransactionListColumns = (
         {
             field: 'amount',
             headerName: 'Amount',
-            width: 120,
+            width: 140,
             onCellClicked: (event) => editTransaction(event),
             valueFormatter: (params: { value: any }) => {
                 if (params.value != null) {

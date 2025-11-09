@@ -29,6 +29,7 @@ const blankTransaction: Transaction = {
     is_expense: true,
     nehu_owns_anshu: 0,
     is_settled: false,
+    to_be_updated: false,
 };
 
 const AddEditTransaction: React.FC<{}> = () => {
@@ -329,6 +330,20 @@ const AddEditTransaction: React.FC<{}> = () => {
                                         label="Expense"
                                         onChange={handleChange}
                                         checked={transactionDetails.is_expense}
+                                    />
+                                </Form.Group>
+                                <Form.Group
+                                    className="mb-3"
+                                    controlId="to_be_updated"
+                                >
+                                    <Form.Check
+                                        type="checkbox"
+                                        name="to_be_updated"
+                                        label="To Be Updated"
+                                        onChange={handleChange}
+                                        checked={
+                                            transactionDetails.to_be_updated
+                                        }
                                     />
                                 </Form.Group>
                                 <div className="text-end">

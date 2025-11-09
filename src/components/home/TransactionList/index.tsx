@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import {
     CellClickedEvent,
@@ -22,9 +22,10 @@ import SelectionConfirmation from './SelectionConfirmation';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
-    transactions,
-}) => {
+const TransactionList: React.FC<{
+    transactions: Transaction[];
+    quickFilterText: string;
+}> = ({ transactions, quickFilterText }) => {
     const [rowData, setRowData] = useState<Transaction[]>(transactions);
     const gridApi = useRef<GridApi | null>(null);
     const [successMessage, setSuccessMessage] = useState<string>('');
@@ -121,6 +122,9 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
             }
         );
     };
+    const paginationPageSizeSelector = useMemo(() => {
+        return [20, 50, 100, 200, 500, 1000];
+    }, []);
 
     return (
         <>
@@ -205,20 +209,25 @@ const TransactionList: React.FC<{ transactions: Transaction[] }> = ({
                     rowData={rowData}
                     columnDefs={colDefs}
                     pagination={true}
-                    paginationPageSize={20}
+                    paginationPageSize={100}
+                    paginationPageSizeSelector={paginationPageSizeSelector}
                     onGridReady={onGridReady}
                     rowSelection={{
                         mode: 'multiRow',
                         headerCheckbox: true,
-                        isRowSelectable: (node) => !node.data?.is_settled,
+                        isRowSelectable: (node) =>
+                            !node.data?.is_settled && !node.data?.to_be_updated,
                     }}
                     getRowStyle={(params) => ({
                         cursor: 'pointer',
                         backgroundColor: params.data?.is_settled
                             ? '#e8feedff'
-                            : '#FFFFFF',
+                            : params.data?.to_be_updated
+                              ? '#fff4e6ff'
+                              : '#FFFFFF',
                     })}
                     onSelectionChanged={onSelectionChanged}
+                    quickFilterText={quickFilterText}
                 />
             </div>
         </>

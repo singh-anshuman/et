@@ -6,6 +6,7 @@ import { Container } from 'react-bootstrap';
 import AppHeader from './components/AppHeader';
 import { Route, Routes } from 'react-router-dom';
 import AddEditTransaction from './components/AddEditTransaction';
+import Reports from './components/Reports';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                     path="/add-edit-transaction"
                     element={<AddEditTransaction />}
                 />
+                <Route path="/reports" element={<Reports />} />
                 <Route path="*" element={<Home />} />
             </Routes>
         </Container>
