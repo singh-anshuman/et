@@ -20,6 +20,25 @@ const QuickFilters: React.FC<{
             });
         return Array.from(new Set(months));
     };
+
+    const isMonthSettled = (month: string): boolean => {
+        return transactions.every((transaction: Transaction) => {
+            const date = new Date(transaction.transaction_date);
+            const transactionMonth = `${date.toLocaleString('default', { month: 'long' })}-${date.getFullYear()}`;
+            return transactionMonth !== month || transaction.is_settled;
+        });
+    };
+    const isMonthPartiallySettled = (month: string): boolean => {
+        return transactions.every((transaction: Transaction) => {
+            const date = new Date(transaction.transaction_date);
+            const transactionMonth = `${date.toLocaleString('default', { month: 'long' })}-${date.getFullYear()}`;
+            return (
+                transactionMonth !== month ||
+                transaction.is_settled ||
+                transaction.to_be_updated
+            );
+        });
+    };
     return (
         <div
             style={{
@@ -32,7 +51,15 @@ const QuickFilters: React.FC<{
             {getMonths().map((m) => {
                 return (
                     <Badge
-                        bg={selectedFilter === m ? 'dark' : 'secondary'}
+                        bg={
+                            selectedFilter === m
+                                ? 'dark'
+                                : isMonthSettled(m)
+                                  ? 'success'
+                                  : isMonthPartiallySettled(m)
+                                    ? 'warning'
+                                    : 'secondary'
+                        }
                         style={{ cursor: 'pointer' }}
                         onClick={() => filterTransactionsByMonth(m)}
                         key={m}
