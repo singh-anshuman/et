@@ -135,7 +135,7 @@ const Reports: React.FC<{}> = () => {
                 <>
                     {!errorMessage && months.length > 0 && (
                         <Row className="align-items-end mb-3">
-                            <Col xs={12} sm={6} md={4} lg={3}>
+                            <Col md={4}>
                                 <Form.Group controlId="report-month">
                                     <Form.Select
                                         value={activeMonth}
@@ -151,7 +151,7 @@ const Reports: React.FC<{}> = () => {
                                     </Form.Select>
                                 </Form.Group>
                             </Col>
-                            <Col xs={12} sm={6} md={8} lg={9}>
+                            <Col md={8}>
                                 <div
                                     style={{
                                         border: '1px solid lightgrey',
