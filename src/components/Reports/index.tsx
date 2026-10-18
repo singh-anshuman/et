@@ -124,7 +124,7 @@ const Reports: React.FC<{}> = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <h1>Monthly Expenses</h1>
+            <h4>Monthly Expenses</h4>
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
             {isLoading ? (
                 <div style={{ textAlign: 'center', marginTop: '100px' }}>
@@ -137,7 +137,6 @@ const Reports: React.FC<{}> = () => {
                         <Row className="align-items-end mb-3">
                             <Col xs={12} sm={6} md={4} lg={3}>
                                 <Form.Group controlId="report-month">
-                                    <Form.Label>Report month</Form.Label>
                                     <Form.Select
                                         value={activeMonth}
                                         onChange={(event) =>
@@ -158,7 +157,7 @@ const Reports: React.FC<{}> = () => {
                                         border: '1px solid lightgrey',
                                         borderRadius: '5px',
                                         marginTop: '10px',
-                                        padding: '10px 15px',
+                                        padding: '6px 15px',
                                     }}
                                 >
                                     <strong>Total expenses: </strong>
@@ -168,17 +167,16 @@ const Reports: React.FC<{}> = () => {
                         </Row>
                     )}
                     {categoryExpenses.length > 0 ? (
-                        <>
-                            <h2 className="h5">Expenses by category</h2>
-                            <Row>
+                        <div style={{ marginTop: '50px' }}>
+                            <h5>Expenses by category</h5>
+                            <Row style={{ marginTop: '30px' }}>
                                 <Col md={8}>
                                     <div
                                         role="img"
                                         aria-label="Bar chart of expense amount by category"
                                         style={{
                                             width: '100%',
-                                            height: 500,
-                                            marginBottom: '100px',
+                                            height: 550,
                                         }}
                                     >
                                         <ResponsiveContainer>
@@ -195,9 +193,9 @@ const Reports: React.FC<{}> = () => {
                                                 <XAxis
                                                     dataKey="category"
                                                     interval={0}
-                                                    angle={-25}
+                                                    angle={-55}
                                                     textAnchor="end"
-                                                    height={70}
+                                                    height={200}
                                                 />
                                                 <YAxis
                                                     tickFormatter={(
@@ -218,7 +216,7 @@ const Reports: React.FC<{}> = () => {
                                                 <Bar
                                                     dataKey="total"
                                                     name="Total expenses"
-                                                    fill="#0d6efd"
+                                                    fill="#333d3e"
                                                 />
                                             </BarChart>
                                         </ResponsiveContainer>
@@ -257,7 +255,7 @@ const Reports: React.FC<{}> = () => {
                                     </Table>
                                 </Col>
                             </Row>
-                        </>
+                        </div>
                     ) : (
                         !errorMessage && (
                             <p>
