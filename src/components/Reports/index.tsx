@@ -121,6 +121,12 @@ const Reports: React.FC<{}> = () => {
         (total, category) => total + category.total,
         0
     );
+    const monthlyTransactionCount = transactions.filter((transaction) => {
+        const date = new Date(transaction.transaction_date);
+        return (
+            !Number.isNaN(date.getTime()) && getMonthKey(date) === activeMonth
+        );
+    }).length;
 
     return (
         <div style={{ padding: '20px' }}>
@@ -162,6 +168,10 @@ const Reports: React.FC<{}> = () => {
                                 >
                                     <strong>Total expenses: </strong>
                                     {currencyFormatter.format(totalExpenses)}
+                                    <span style={{ marginLeft: '24px' }}>
+                                        <strong>Total transactions: </strong>
+                                        {monthlyTransactionCount}
+                                    </span>
                                 </div>
                             </Col>
                         </Row>
